@@ -1,147 +1,78 @@
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.font.*;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
+import javax.swing.*;
 
 /**
- * showcase of different fonts.
- *
- * @author Roman Bureacov
- * @version February 2025
+ * @version 1.35 2018-04-10
+ * @author Cay Horstmann
  */
 public class FontTest {
-    public static void main(String... args) {
-        //printFonts();
-
+    public static void main(String[] args) {
         EventQueue.invokeLater( () -> {
-            JFrame frame = new BasicFrame();
-            frame.setTitle("TEXT!!!");
+            var frame = new FontFrame();
+            frame.setTitle("FontTest");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);
-
-            (new TextComponent()).fontMetricNoGraphics2D();
         });
     }
+}
 
-    /**
-     * Method that prints out font names.
-     *
-     * @author Cay Horstmann
-     */
-    public static void printFonts() {
-        String[] fontNames = GraphicsEnvironment
-                .getLocalGraphicsEnvironment()
-                .getAvailableFontFamilyNames();
-        for (String fontName : fontNames)
-            System.out.println(fontName);
+/**
+ * A frame with a text message component.
+ */
+class FontFrame extends JFrame {
+    public FontFrame() {
+        add(new FontComponent());
+        pack();
+    }
+}
+
+/**
+ * A component that shows a centered message in a box.
+ */
+class FontComponent extends JComponent {
+    private static final int DEFAULT_WIDTH = 300;
+    private static final int DEFAULT_HEIGHT = 200;
+
+    public void paintComponent(Graphics g) {
+        var g2 = (Graphics2D) g;
+
+        String message = "Hello, World!";
+
+        var f = new Font("Serif", Font.BOLD, 36);
+        g2.setFont(f);
+
+        // measure the size of the message
+
+        FontRenderContext context = g2.getFontRenderContext();
+        Rectangle2D bounds = f.getStringBounds(message, context);
+
+        // set (x,y) = top left corner of text
+
+        double x = (getWidth() - bounds.getWidth()) / 2;
+        double y = (getHeight() - bounds.getHeight()) / 2;
+
+        // add ascent to y to reach the baseline
+
+        double ascent = -bounds.getY();
+        double baseY = y + ascent;
+
+        g2.drawString(message, (int) x, (int) baseY);
+
+        g2.setPaint(Color.LIGHT_GRAY);
+
+        // draw the baseline
+
+        g2.draw(new Line2D.Double(x, baseY, x + bounds.getWidth(), baseY));
+
+        // draw the enclosing rectangle
+
+        var rect = new Rectangle2D.Double(x, y, bounds.getWidth(), bounds.getHeight());
+        g2.draw(rect);
     }
 
-    static class BasicFrame extends JFrame {
-        protected static final int WIDTH = 200;
-        protected static final int HEIGHT = 200;
-
-        public BasicFrame() {
-            super();
-            this.setSize(WIDTH, HEIGHT);
-            add(new TextComponent());
-            pack();
-        }
-    }
-
-    static class TextComponent extends JComponent {
-
-        private static final
-        Font someFont =
-                //new Font("Zapfino Forte LT Pro", Font.BOLD, 14);
-                new Font("SansSerif", Font.BOLD, 28);
-
-        private static final String message = "Hello World!g";
-
-
-        /**
-         * Demonstration of how to get font metrics in a place without a Graphics2D
-         */
-        public void fontMetricNoGraphics2D() {
-            FontRenderContext context = this.getFontMetrics(someFont).getFontRenderContext();
-
-            Rectangle2D messageBounds = someFont.getStringBounds(message, context);
-
-            LineMetrics metrics = someFont.getLineMetrics(message, context);
-
-            System.out.printf("message \"%s\" has the properties:"
-                    + "\nwidth: %f"
-                    + "\nheight: %f"
-                    + "\nascent: %f"
-                    + "\ndescent: %f"
-                    + "\nleading: %f",
-                    message,
-                    messageBounds.getWidth(),
-                    messageBounds.getHeight(),
-                    metrics.getAscent(),
-                    metrics.getDescent(),
-                    metrics.getLeading()
-            );
-
-        }
-
-        @Override
-        public void paintComponent(Graphics g) {
-
-            var g2 = (Graphics2D) g;
-
-            g2.draw(new Line2D.Double(0, 0, BasicFrame.WIDTH, BasicFrame.HEIGHT));
-            g2.draw(new Line2D.Double(BasicFrame.WIDTH, 0, 0, BasicFrame.HEIGHT));
-
-            g2.setFont(someFont);
-
-            FontRenderContext context = g2.getFontRenderContext();
-            Rectangle2D boundingRect = someFont.getStringBounds(message, context);
-
-            double stringWidth = boundingRect.getWidth();
-            double stringHeight = boundingRect.getHeight();
-
-            // metrics
-            LineMetrics metrics = someFont.getLineMetrics(message, context);
-            float ascent = metrics.getAscent();
-
-            int centeredX = BasicFrame.WIDTH / 2 - (int)stringWidth / 2;
-            int centeredY = BasicFrame.HEIGHT / 2 - (int)stringHeight / 2;
-
-            boundingRect.setFrame(centeredX, centeredY, boundingRect.getWidth(), boundingRect.getHeight());
-
-            g2.draw(boundingRect);
-
-            g2.drawString(message, centeredX, centeredY + (int)ascent);
-
-            g2.setPaint(Color.RED);
-            g2.draw(new Line2D.Double(
-                    boundingRect.getX(),
-                    boundingRect.getY() + metrics.getAscent(),
-                    boundingRect.getX() + boundingRect.getWidth(),
-                    boundingRect.getY() + metrics.getAscent()
-                    )
-            );
-            g2.draw(new Line2D.Double(
-                    boundingRect.getX(),
-                    boundingRect.getY() + metrics.getAscent() + metrics.getDescent(),
-                    boundingRect.getX() + boundingRect.getWidth(),
-                    boundingRect.getY() + metrics.getAscent() + metrics.getDescent()
-                    )
-            );
-            g2.draw(new Line2D.Double(
-                    boundingRect.getX(),
-                    boundingRect.getY() + metrics.getAscent() + metrics.getDescent() + metrics.getLeading(),
-                    boundingRect.getX() + boundingRect.getWidth(),
-                    boundingRect.getY() + metrics.getAscent() + metrics.getDescent() + metrics.getLeading()
-                    )
-            );
-        }
-
-        @Override
-        public Dimension getPreferredSize() {
-            return new Dimension(BasicFrame.WIDTH, BasicFrame.HEIGHT);
-        }
+    public Dimension getPreferredSize() {
+        return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 }
