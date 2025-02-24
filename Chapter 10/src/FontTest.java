@@ -35,6 +35,7 @@ class FontComponent extends JComponent {
     private static final int DEFAULT_WIDTH = 300;
     private static final int DEFAULT_HEIGHT = 200;
 
+    @Override
     public void paintComponent(Graphics g) {
         var g2 = (Graphics2D) g;
 
