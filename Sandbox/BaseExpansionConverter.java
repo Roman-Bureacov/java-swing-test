@@ -27,7 +27,7 @@ public class BaseExpansionConverter {
      *
      * @param theOldNumber the number to convert from (base 10)
      * @param theNewBase the base that the output number should be in
-     * @return the old number converted from the old base to the new base
+     * @return the old number converted from the old base to the new base in string format
      */
     public static String toBase(final int theOldNumber, final int theNewBase) {
         final String spacer = theNewBase > 10 ? " " : "";
