@@ -1,22 +1,24 @@
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-import java.util.*;
-import java.util.concurrent.RecursiveAction;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 /**
  * A component with mouse operations for adding and removing squares.
  *
  * @author Cay Horstmann
  */
-public class MouseComponent extends JComponent {
+public class MouseComponent_sandbox extends JComponent {
 
     public static void main(String... args) {
         EventQueue.invokeLater( () -> {
             JFrame frame = new JFrame();
             frame.setSize(300, 300);
-            frame.add(new MouseComponent());
+            frame.add(new MouseComponent_sandbox());
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);
         });
@@ -29,7 +31,7 @@ public class MouseComponent extends JComponent {
     private ArrayList<Rectangle2D> squares;
     private Rectangle2D current; // the squares containing the mouse cursor
 
-    public MouseComponent() {
+    public MouseComponent_sandbox() {
         squares = new ArrayList<>();
         current = null;
 
@@ -101,7 +103,15 @@ public class MouseComponent extends JComponent {
         public void mouseClicked(MouseEvent event) {
             // remove the current square if it is double clicked
             current = find(event.getPoint());
-            if (current != null && event.getClickCount() >= 2) remove(current);
+            if (current != null) {
+                if (event.getClickCount() == 2) remove(current);
+                else if (event.getClickCount() >= 3) getGraphics().fillRect(
+                        (int)current.getX(),
+                        (int)current.getY(),
+                        (int)current.getWidth(),
+                        (int)current.getHeight()
+                );
+            }
         }
     }
 

@@ -43,7 +43,7 @@ public class ButtonFrame_sandbox extends JFrame {
     }
 
     /**
-     * Helper method to create the isntance of a class that implements the ActionListener interface,
+     * Helper method to create the instance of a class that implements the ActionListener interface,
      * and have the actionPerformed actions reference the backGroundColor value stored within the listener object.
      */
     public void makeButton(String name, Color backgroundColor) {
